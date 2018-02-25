@@ -19,11 +19,11 @@ ms.Gain=3*ones(ms.N,1);
 ext.bsx=reshape(transpose(repmat(bs.x,1,usersInCell)),ms.N,1);
 ext.bsy=reshape(transpose(repmat(bs.y,1,usersInCell)),ms.N,1);
 
-scatter(ms.X,ms.Y);
-hold;
+%%scatter(ms.X,ms.Y);
+%%hold;
 ms.X=ms.X+ext.bsx;
 ms.Y=ms.Y+ext.bsy;
-scatter(ms.X,ms.Y);
+%%scatter(ms.X,ms.Y);
 
 %3
 %ms.FPL - full table of path loss ( to each ms row of path loss from each
@@ -42,6 +42,27 @@ for i = 1:bs.N
    ms.Rssi(:,i)=rssiCol;
 end
 [~,ms.IndexOfBs]=max(ms.Rssi,[],2);
+interfrance = dbm2watt(ms.FPL);
+ms.SIR = (1/6).*(distan./500);
+SIRDB =   10.*log10(ms.SIR);
+for i = 1:ms.N 
+    ms.Rate(i,1) = rateFromSirDb(SIRDB(i));          
+end
+
+f1=figure;
+f2=figure;
+hist(ms.Rate);
+hist(ms.SIR);
+figure(f1);
+for i = 1:bs.N 
+    DrawHexa(bs.x(i),bs.y(i),1000);
+    hold on;
+end
+c=linspace(1,19,7600);
+scatter(ms.X,ms.Y,[],c);
+hold off;
+
+
 
 
 
